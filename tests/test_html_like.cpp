@@ -1,5 +1,5 @@
-#ifndef _GRAPHVIZ_WRAPPER_H_
-#define _GRAPHVIZ_WRAPPER_H_
+// The MIT License (MIT)
+
 // Copyright (c) 2024 Liao-QiHua
 
 //  Permission is hereby granted, free of charge, to any person obtaining a
@@ -20,35 +20,34 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 
-#include "include/attribute_types.h"
+#include <iostream>
+#include "include/html_like.h"
 
-namespace gvw {
+int test0() {
+    using namespace std;
+    using namespace graphvizwrapper::htmllike;
+    Table * table = new Table;
+    table->SetAlign("center");
 
-class GGraph {};
+    TableRow * row1 = new TableRow;
+    TableRow * row2 = new TableRow;
+    row1->SetAlign("left");
+    row1->SetBgcolor("green");
+    TableCell * cell11 = new TableCell;
+    cell11->SetText(std::string("A"));
+    TableCell * cell12 = new TableCell;
+    cell12->SetText(std::string("B"));
+    row1->AddCell(cell11);
+    row1->AddCell(cell12);
+    TableCell * cell21 = new TableCell;
+    cell21->SetText(std::string("C"));
+    row2->AddCell(cell21);
+    table->AddRow(row1);
+    table->AddRow(row2);
+    std::cout << table->to_string() << "\n";
+    return 0;
+}
 
-class GSubGraph : public GGraph {};
-
-class Node {};
-
-class Cluster {};
-// Add "attr" attribute to "obj" object.
-template <typename ObjectType, typename AttibuteType>
-void AddAttribute(ObjectType obj, AttibuteType attr);
-
-//
-void AddEdge(GGraph& graph, Node from, Node to,
-             GArrowType arrowhead = GArrowType::kNormal,
-             GArrowType arrowtail = GArrowType::kNormal,
-             GDouble arrowsize = 1.0);
-
-void AddSubGraph(GGraph& graph, GSubGraph subgraph);
-
-
-
-class GraphvizWapper {
- public:
-  GraphvizWapper() {}
-};
-}  // namespace gvw
-
-#endif  // _GRAPHVIZ_WRAPPER_H_
+int main() {
+    return test0();
+}

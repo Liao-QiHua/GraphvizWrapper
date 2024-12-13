@@ -1,10 +1,14 @@
-# 设置源文件
-set(SOURCE_FILES
-    graphviz_wrapper.cc
+# Note that the source file should be suffixed with "cc",
+# otherwise add the source file yourself.
+file(GLOB SOURCES "*.cc")
+
+add_library(GraphvizWrapper STATIC
+    ${SOURCES}
 )
 
-# 创建主可执行文件
-add_executable(GraphvizWrapper ${SOURCE_FILES})
-
-# 添加链接库
-# target_link_libraries(GraphvizWrapper SomeLibrary)
+# Set the header file search path.
+# Note that to add a header file, start with the include subdirectory.
+# e.g: #include "include/types.h"
+target_include_directories(GraphvizWrapper PUBLIC
+    ${CMAKE_SOURCE_DIR}/
+)
