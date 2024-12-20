@@ -1,3 +1,5 @@
+#ifndef _GRAPHVIZ_H_
+#define _GRAPHVIZ_H_
 // The MIT License (MIT)
 
 // Copyright (c) 2024 Liao-QiHua
@@ -20,34 +22,33 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
-#include "include/html_like.h"
+#include "include/nodes.h"
 
-int test0() {
-    using namespace std;
-    using namespace graphvizwrapper::htmllike;
-    Table * table = new Table;
-    table->SetAlign("center");
+namespace graphvizwrapper {
 
-    TableRow * row1 = new TableRow;
-    TableRow * row2 = new TableRow;
-    row1->SetAlign("left");
-    row1->SetBgcolor("green");
-    TableCell * cell11 = new TableCell;
-    cell11->SetText(std::string("A"));
-    TableCell * cell12 = new TableCell;
-    cell12->SetText(std::string("B"));
-    row1->AddCell(cell11);
-    row1->AddCell(cell12);
-    TableCell * cell21 = new TableCell;
-    cell21->SetText(std::string("C"));
-    row2->AddCell(cell21);
-    table->AddRow(row1);
-    table->AddRow(row2);
-    std::cout << *(table->to_string()) << "\n";
-    return 0;
-}
+class Graphviz {
+public:
+  Graphviz(TNodeType tnode_type = TNodeType::kGraph, bool strict = false)
+    : root_(new Graph(tnode_type, strict)) {
+  }
+  ~Graphviz() { free(root_); }
+  void AddSubGraph(Graph * sub_graph);
+  void AddNodeStmt(NodeStmt * stmt);
+  void AddEdgeStmt(EdgeStmt * stmt);
+  void AddAttrStmt(AttrStmt * stmt);
+  void AddIdAssignStmt(IdAssignStmt * stmt);
+  // Graph * CreateSubGraph(Graph * parent = this);
+  // NodeStmt * CreateNodeStmt();
+  // EdgeStmt * CreateEdgeStmt();
+  // AttrStmt * CreateAttrStmt();
+  // IdAssignStmt * CreateIdAssignStmt();
+private:
+  // Release the entire tree with root_ as the root by postorder traversal.
+  void free(TNode * root);
+public:
+  Graph * root_;
+};
 
-int main() {
-    return test0();
-}
+}  // namespace graphvizwrapper
+
+#endif // _GRAPHVIZ_H_

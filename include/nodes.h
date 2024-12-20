@@ -23,6 +23,7 @@
 //  DEALINGS IN THE SOFTWARE.
 
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -53,13 +54,17 @@ class TNode {
   // kSubGraphStmt or kIdAssignStmt.
   void AddChild(TNode *child);
 
+  std::vector<TNode*>& GetChilds() { return childs_; }
+
   TNodeType tnode_type() { return tnode_type_; }
 
   TNode *parent() { return parent_; }
 
   int level() { return level_; }
 
-  virtual std::string to_string() { return ""; }
+  virtual std::shared_ptr<std::string> to_string() { 
+    return std::make_shared<std::string>("");
+  }
 
  protected:
   void set_level(int level) { level_ = level; }
@@ -73,14 +78,14 @@ class TNode {
   std::vector<TNode *> childs_;
 };
 
-class GGraph : public TNode {
+class Graph : public TNode {
  public:
-  GGraph(TNodeType tnode_type = TNodeType::kGraph, bool strict = false)
+  Graph(TNodeType tnode_type = TNodeType::kGraph, bool strict = false)
       : TNode(tnode_type), strict_(strict) {}
 
-  ~GGraph() = default;
+  ~Graph() = default;
 
-  virtual std::string to_string() override;
+  virtual std::shared_ptr<std::string> to_string() override;
 
   std::string GetName();
 
@@ -88,58 +93,58 @@ class GGraph : public TNode {
   bool strict_;
 };
 
-class GAttrStmt : public TNode {
+class AttrStmt : public TNode {
  public:
   enum AttrStmtType { kGraph, kNode, kEdge };
 
  public:
-  GAttrStmt(AttrStmtType attr_stmt_type)
+  AttrStmt(AttrStmtType attr_stmt_type)
       : TNode(TNodeType::kAttrStmt), attr_stmt_type_(attr_stmt_type) {}
-  ~GAttrStmt() = default;
+  ~AttrStmt() = default;
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
-  virtual std::string to_string() override;
+  virtual std::shared_ptr<std::string> to_string() override;
 
  private:
   AttrStmtType attr_stmt_type_;
   AttributeList attr_list_;
 };
 
-class GNodeStmt : public TNode {
+class NodeStmt : public TNode {
  public:
-  GNodeStmt(std::string node_id)
+  NodeStmt(std::string node_id)
       : TNode(TNodeType::kNodeStmt), node_id_(node_id) {}
-  ~GNodeStmt() = default;
+  ~NodeStmt() = default;
   void set_attr_list(AttributeList &attr_list) { attr_list_ = attr_list; }
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
 
   std::string GetNodeIdStr() { return node_id_; }
-  virtual std::string to_string() override;
+  virtual std::shared_ptr<std::string> to_string() override;
 
  private:
   std::string node_id_;
   AttributeList attr_list_;
 };
 
-class GEdgeStmt : public TNode {
+class EdgeStmt : public TNode {
  public:
-  GEdgeStmt(bool directed = false)
+  EdgeStmt(bool directed = false)
       : TNode(TNodeType::kEdgeStmt), directed_(directed) {}
-  ~GEdgeStmt() = default;
-  void set_edge(GNodeStmt *begin, GNodeStmt *end);
+  ~EdgeStmt() = default;
+  void set_edge(NodeStmt *begin, NodeStmt *end);
   void set_attr_list(AttributeList &attr_list) { attr_list_ = attr_list; }
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
-  virtual std::string to_string() override;
+  virtual std::shared_ptr<std::string> to_string() override;
 
  private:
   bool directed_;
-  GNodeStmt *begin_;
-  GNodeStmt *end_;
+  NodeStmt *begin_;
+  NodeStmt *end_;
   AttributeList attr_list_;
 };
 
@@ -147,7 +152,9 @@ class IdAssignStmt : public TNode {
  public:
   IdAssignStmt() : TNode(TNodeType::kIdAssignStmt) {}
   ~IdAssignStmt() = default;
-  virtual std::string to_string() { return ""; }
+  virtual std::shared_ptr<std::string> to_string() {
+    return std::make_shared<std::string>("");
+  }
 };
 
 }  // namespace graphvizwrapper

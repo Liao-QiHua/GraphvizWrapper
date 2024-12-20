@@ -22,47 +22,66 @@
 
 #include "include/html_like.h"
 
+#include <memory>
+
 namespace graphvizwrapper::htmllike {
 
 // TableAttributeList begin
-std::string TableAttributeList::GetAttrlistStr() {
-  std::string attr_str;
+std::shared_ptr<std::string> TableAttributeList::GetAttrlistStr() {
+  auto attr_str = std::make_shared<std::string>();
+  attr_str->reserve(50);
   for (const auto& kv : attr_list_) {
-    attr_str += " " + kv.first + "=" + "\"" + kv.second + "\"";
+    attr_str->append(" ")
+            .append(kv.first)
+            .append("=")
+            .append("\"")
+            .append(kv.second)
+            .append("\"");
   }
   return attr_str;
 }
 // TableAttributeList end
 
 // TableCell begin
-std::string TableCell::to_string() {
-  std::string cell_str;
-  cell_str = std::string("<td") + GetAttrlistStr() + std::string(">");
-  cell_str += text_ + std::string("</td>");
-  return std::string("<td>") + text_ + std::string("</td>\n");
+std::shared_ptr<std::string> TableCell::to_string() {
+  auto cell_str = std::make_shared<std::string>();
+  cell_str->reserve(50);
+  cell_str->append("<td")
+          .append(*GetAttrlistStr())
+          .append(">")
+          .append(text_)
+          .append("</td>\n");
+  return cell_str;
 }
 // TableCell end
 
 // TableRow begin
-std::string TableRow::to_string() {
-  std::string row_str;
-  row_str = std::string("<tr") + GetAttrlistStr() + std::string(">\n");
+std::shared_ptr<std::string> TableRow::to_string() {
+  auto row_str = std::make_shared<std::string>();
+  row_str->reserve(50);
+  row_str->append("<tr>")
+         .append(*GetAttrlistStr())
+         .append(">\n");
   for (auto i = 0u; i < cells_.size(); i++) {
-    row_str += std::string(4, ' ') + cells_[i]->to_string();
+    row_str->append(std::string(4, ' '))
+           .append(*cells_[i]->to_string());
   }
-  row_str += "  </tr>\n";
+  row_str->append("</tr>\n");
   return row_str;
 }
 // TableRow end
 
 // Table begin
-std::string Table::to_string() {
-  std::string table_str;
-  table_str = std::string("<table") + GetAttrlistStr() + std::string(">\n");
+std::shared_ptr<std::string> Table::to_string() {
+  auto table_str = std::make_shared<std::string>();
+  table_str->reserve(50);
+  table_str->append("<table")
+           .append(*GetAttrlistStr())
+           .append(">\n");
   for (auto i = 0u; i < rows_.size(); i++) {
-    table_str += rows_[i]->to_string();
+    table_str->append(*rows_[i]->to_string());
   }
-  table_str += "</table>\n";
+  table_str->append("</table>\n");
   return table_str;
 }
 // Table end

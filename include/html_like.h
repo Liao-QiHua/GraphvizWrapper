@@ -23,6 +23,7 @@
 //  DEALINGS IN THE SOFTWARE.
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -50,7 +51,7 @@ class TableAttributeList {
   }
 
  protected:
-  std::string GetAttrlistStr();
+  std::shared_ptr<std::string> GetAttrlistStr();
 
  protected:
   std::map<std::string, std::string> attr_list_;
@@ -59,7 +60,7 @@ class TableAttributeList {
 class TableCell : public TableAttributeList {
  public:
   void SetText(std::string value) { text_ = value; }
-  std::string to_string();
+  std::shared_ptr<std::string> to_string();
 
  protected:
   std::string text_;
@@ -68,7 +69,7 @@ class TableCell : public TableAttributeList {
 class TableRow : public TableAttributeList {
  public:
   void AddCell(TableCell* cell) { cells_.push_back(cell); }
-  std::string to_string();
+  std::shared_ptr<std::string> to_string();
 
  protected:
   std::vector<TableCell*> cells_;
@@ -77,7 +78,7 @@ class TableRow : public TableAttributeList {
 class Table : public TableAttributeList {
  public:
   void AddRow(TableRow* row) { rows_.push_back(row); }
-  std::string to_string();
+  std::shared_ptr<std::string> to_string();
 
  protected:
   std::vector<TableRow*> rows_;

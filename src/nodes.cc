@@ -22,6 +22,7 @@
 
 #include "include/nodes.h"
 
+#include <memory>
 #include <string>
 
 
@@ -46,19 +47,23 @@ void TNode::set_level(TNode *node, int level) {
 }
 // TNode end
 
-// GGraph begin
-std::string GGraph::to_string() {
-  std::string str;
-  std::string space_str(level(), ' ');
-  str += space_str + GetName() + " {\n";
+// Graph begin
+std::shared_ptr<std::string> Graph::to_string() {
+  auto graph_str = std::make_shared<std::string>();
+  graph_str->reserve(100);
+  std::string space_str(level() * 2, ' ');
+  graph_str->append(space_str)
+           .append(GetName())
+           .append(" {\n");
   for (auto i = 0u; i < childs_.size(); i++) {
-    str += childs_[i]->to_string();
+    graph_str->append(*childs_[i]->to_string());
   }
-  str += space_str + "}\n";
-  return str;
+  graph_str->append(space_str)
+           .append("}\n");
+  return graph_str;
 }
 
-std::string GGraph::GetName() {
+std::string Graph::GetName() {
   if (tnode_type() == TNodeType::kSubGraph) {
     return std::string("subgraph");
   }
@@ -69,38 +74,43 @@ std::string GGraph::GetName() {
   return tnode_type() == TNodeType::kGraph ? std::string("graph")
                                            : std::string("digraph");
 }
-// GGraph end
+// Graph end
 
-// GAttrStmt begin
-std::string GAttrStmt::to_string() {
-  std::string attr_stmt_str;
+// AttrStmt begin
+std::shared_ptr<std::string> AttrStmt::to_string() {
+  auto attr_stmt_str = std::make_shared<std::string>();
+  attr_stmt_str->reserve(50);
   switch (attr_stmt_type_) {
     case kGraph:
-      attr_stmt_str += "graph ";
+      attr_stmt_str->append("graph ");
       break;
     case kNode:
-      attr_stmt_str += "node ";
+      attr_stmt_str->append("node ");
       break;
     default:
-      attr_stmt_str += "edge ";
+      attr_stmt_str->append("edge ");
       break;
   }
-  attr_stmt_str += attr_list_.to_string();
+  attr_stmt_str->append(attr_list_.to_string());
   return attr_stmt_str;
 }
-// GAttrStmt end
+// AttrStmt end
 
-// GNodeStmt begin
-std::string GNodeStmt::to_string() {
-  std::string space_str(level(), ' ');
-  std::string node_stmt_str = space_str + node_id_;
-  node_stmt_str += attr_list_.to_string() + ";\n\0";
+// NodeStmt begin
+std::shared_ptr<std::string> NodeStmt::to_string() {
+  std::string space_str(level() * 2, ' ');
+  auto node_stmt_str = std::make_shared<std::string>();
+  node_stmt_str->reserve(50);
+  node_stmt_str->append(space_str)
+               .append(node_id_)
+               .append(attr_list_.to_string())
+               .append(";\n");
   return node_stmt_str;
 }
-// GNodeStmt end
+// NodeStmt end
 
-// GEdgeStmt begin
-void GEdgeStmt::set_edge(GNodeStmt *begin, GNodeStmt *end) {
+// EdgeStmt begin
+void EdgeStmt::set_edge(NodeStmt *begin, NodeStmt *end) {
   if (begin == nullptr || end == nullptr) {
     exit(1);
   }
@@ -108,15 +118,20 @@ void GEdgeStmt::set_edge(GNodeStmt *begin, GNodeStmt *end) {
   end_ = end;
 }
 
-std::string GEdgeStmt::to_string() {
+std::shared_ptr<std::string> EdgeStmt::to_string() {
   if (begin_ == nullptr || end_ == nullptr) {
     exit(1);
   }
-  std::string space_str(level(), ' ');
-  std::string edge_stmt_str = space_str + begin_->GetNodeIdStr();
-  edge_stmt_str += directed_ ? " -> " : " -- ";
-  edge_stmt_str += end_->GetNodeIdStr() + attr_list_.to_string() + ";\n\0";
+  std::string space_str(level() * 2, ' ');
+  auto edge_stmt_str = std::make_shared<std::string>();
+  edge_stmt_str->reserve(50);
+  edge_stmt_str->append(space_str)
+               .append(begin_->GetNodeIdStr())
+               .append(directed_ ? " -> " : " -- ")
+               .append(end_->GetNodeIdStr())
+               .append(attr_list_.to_string())
+               .append(";\n");
   return edge_stmt_str;
 }
-// GEdgeStmt end
+// EdgeStmt end
 }  // namespace graphvizwrapper

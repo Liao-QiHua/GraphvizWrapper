@@ -23,40 +23,42 @@
 #include <iostream>
 #include "include/nodes.h"
 #include "include/types.h"
+#include "include/graphviz.h"
 
 
 int test0() {
     using namespace std;
     using namespace graphvizwrapper;
-    GGraph * graph = new GGraph(TNodeType::kDigraph, true);
-    GNodeStmt * node_A = new GNodeStmt("A");
-    GNodeStmt * node_B = new GNodeStmt("B");
-    GNodeStmt * node_C = new GNodeStmt("C");
+    Graphviz graph;
+    // Graph * graph = new Graph(TNodeType::kDigraph, true);
+    NodeStmt * node_A = new NodeStmt("A");
+    NodeStmt * node_B = new NodeStmt("B");
+    NodeStmt * node_C = new NodeStmt("C");
     //GAttributeList * attr_list = new GAttributeList();
     node_A->AddAttr("label", "As");
     node_A->AddAttr("color", "green");
     node_B->AddAttr("color", "red");
-    graph->AddChild(node_A);
-    graph->AddChild(node_B);
+    graph.AddNodeStmt(node_A);
+    graph.AddNodeStmt(node_B);
     //node_A->AddAttr()
-    GEdgeStmt * edge_stmt1 = new GEdgeStmt(true);
-    GEdgeStmt * edge_stmt2 = new GEdgeStmt(true);
+    EdgeStmt * edge_stmt1 = new EdgeStmt(true);
+    EdgeStmt * edge_stmt2 = new EdgeStmt(true);
     edge_stmt1->set_edge(node_A, node_B);
     edge_stmt2->set_edge(node_A, node_C);
     edge_stmt1->AddAttr("label", "True");
     edge_stmt2->AddAttr("label", "False");
-    graph->AddChild(edge_stmt1);
-    graph->AddChild(edge_stmt2);
+    graph.AddEdgeStmt(edge_stmt1);
+    graph.AddEdgeStmt(edge_stmt2);
 
-    GGraph* subgraph = new GGraph(TNodeType::kSubGraph, true);
-    GEdgeStmt * edge_stmt3 = new GEdgeStmt(true);
-    GEdgeStmt * edge_stmt4 = new GEdgeStmt(true);
+    Graph* subgraph = new Graph(TNodeType::kSubGraph, true);
+    EdgeStmt * edge_stmt3 = new EdgeStmt(true);
+    EdgeStmt * edge_stmt4 = new EdgeStmt(true);
     edge_stmt3->set_edge(node_B, node_C);
     edge_stmt4->set_edge(node_B, node_A);
     subgraph->AddChild(edge_stmt3);
     subgraph->AddChild(edge_stmt4);
-    graph->AddChild(subgraph);
-    cout << graph->to_string();
+    graph.AddSubGraph(subgraph);
+    cout << graph.root_->to_string();
     return 0;
 }
 int main() {

@@ -20,34 +20,58 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 
+#include "include/graphviz.h"
+
 #include <iostream>
-#include "include/html_like.h"
 
-int test0() {
-    using namespace std;
-    using namespace graphvizwrapper::htmllike;
-    Table * table = new Table;
-    table->SetAlign("center");
+namespace graphvizwrapper {
 
-    TableRow * row1 = new TableRow;
-    TableRow * row2 = new TableRow;
-    row1->SetAlign("left");
-    row1->SetBgcolor("green");
-    TableCell * cell11 = new TableCell;
-    cell11->SetText(std::string("A"));
-    TableCell * cell12 = new TableCell;
-    cell12->SetText(std::string("B"));
-    row1->AddCell(cell11);
-    row1->AddCell(cell12);
-    TableCell * cell21 = new TableCell;
-    cell21->SetText(std::string("C"));
-    row2->AddCell(cell21);
-    table->AddRow(row1);
-    table->AddRow(row2);
-    std::cout << *(table->to_string()) << "\n";
-    return 0;
+void Graphviz::AddSubGraph(Graph* sub_graph) {
+  if (sub_graph != nullptr) root_->AddChild(sub_graph);
 }
 
-int main() {
-    return test0();
+void Graphviz::AddNodeStmt(NodeStmt* stmt) {
+  if (stmt != nullptr) root_->AddChild(stmt);
 }
+
+void Graphviz::AddEdgeStmt(EdgeStmt* stmt) {
+  if (stmt != nullptr) root_->AddChild(stmt);
+}
+
+void Graphviz::AddAttrStmt(AttrStmt* stmt) {
+  if (stmt != nullptr) root_->AddChild(stmt);
+}
+
+void Graphviz::AddIdAssignStmt(IdAssignStmt* stmt) {
+  if (stmt != nullptr) root_->AddChild(stmt);
+}
+
+// Graph *  Graphviz::CreateSubGraph(Graph * parent) {
+//   return new Graph(TNodeType::kSubGraph, parent->getStrict());
+// }
+
+// NodeStmt * Graphviz::CreateNodeStmt() {
+
+// }
+
+// EdgeStmt * Graphviz::CreateEdgeStmt() {
+
+// }
+
+// AttrStmt * Graphviz::CreateAttrStmt() {
+
+// }
+
+// IdAssignStmt * Graphviz::CreateIdAssignStmt() {
+
+// }
+
+void Graphviz::free(TNode * root) {
+    if (root == nullptr) return;
+    for (auto * child : root->GetChilds()) {
+        free(child);
+    }
+    //std::cout << (int)root->tnode_type() << "\n";
+    delete root;
+}
+}  // namespace graphvizwrapper
