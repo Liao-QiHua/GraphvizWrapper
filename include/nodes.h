@@ -32,6 +32,8 @@
 
 namespace graphvizwrapper {
 
+class TreeVisitor;
+
 enum class TNodeType {
   kUnknown,
   kGraph,
@@ -60,6 +62,8 @@ class TNode {
 
   TNode *parent() { return parent_; }
 
+  virtual void accept(TreeVisitor* visitor) = 0;
+
   int level() { return level_; }
 
   virtual std::shared_ptr<std::string> to_string() { 
@@ -85,6 +89,12 @@ class Graph : public TNode {
 
   ~Graph() = default;
 
+  virtual void accept(TreeVisitor* visitor) {
+    visitor->visitGraph(this);
+  }
+
+  bool strict() { return strict_; }
+
   virtual std::shared_ptr<std::string> to_string() override;
 
   std::string GetName();
@@ -104,6 +114,9 @@ class AttrStmt : public TNode {
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
+  virtual void accept(TreeVisitor* visitor) {
+    visitor->visitAttrStmt(this);
+  }
   virtual std::shared_ptr<std::string> to_string() override;
 
  private:
@@ -119,6 +132,10 @@ class NodeStmt : public TNode {
   void set_attr_list(AttributeList &attr_list) { attr_list_ = attr_list; }
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
+  }
+
+  virtual void accept(TreeVisitor* visitor) {
+    visitor->visitNodeStmt(this);
   }
 
   std::string GetNodeIdStr() { return node_id_; }
@@ -139,6 +156,9 @@ class EdgeStmt : public TNode {
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
+  virtual void accept(TreeVisitor* visitor) {
+    visitor->visitEdgeStmt(this);
+  }
   virtual std::shared_ptr<std::string> to_string() override;
 
  private:
@@ -152,6 +172,9 @@ class IdAssignStmt : public TNode {
  public:
   IdAssignStmt() : TNode(TNodeType::kIdAssignStmt) {}
   ~IdAssignStmt() = default;
+  virtual void accept(TreeVisitor* visitor) {
+    visitor->visitIdAssignStmt(this);
+  }
   virtual std::shared_ptr<std::string> to_string() {
     return std::make_shared<std::string>("");
   }
