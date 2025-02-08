@@ -63,11 +63,7 @@ class TNode {
 
   TNode *parent() { return parent_; }
 
-<<<<<<< Updated upstream
-  virtual void accept(TreeVisitor* visitor) = 0;
-=======
   virtual void accept(TreeVisitor *visitor) = 0;
->>>>>>> Stashed changes
 
   int level() { return level_; }
 
