@@ -29,6 +29,15 @@ namespace graphvizwrapper {
     std::cout << (s) << std::endl; \
   } while (false);
 
+#define ERROR_PRINT(s)             \
+  do {                             \
+    std::cout << "!!!Error in "    \
+              << __func__          \
+              << "(" << __LINE__   \
+              << ")" << ": " << s  \
+              << std::endl;        \
+  } while (false);
+
 template <typename T, T v>
 inline std::string enum_to_string() {
   const char* function = nullptr;
@@ -45,6 +54,7 @@ inline std::string enum_to_string() {
   auto start = 0u;
   auto equal_num = 0u;
   auto i = 0u;
+  // find the second '='
   while (i < function_len) {
     if (function[i] != '=') {
     } else if (function[i] == '=') {
@@ -56,8 +66,8 @@ inline std::string enum_to_string() {
     }
     ++i;
   }
-  // skip ' '
-  ++start;
+  // skip '=' and ' '
+  start += 2;
   std::string v_str;
   while (start < function_len) {
     if (function[start] != ';') {
