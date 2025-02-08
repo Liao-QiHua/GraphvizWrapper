@@ -27,8 +27,9 @@
 #include <string>
 #include <vector>
 
-#include "include/types.h"
 #include "include/attributes.h"
+#include "include/tree_visitor.h"
+#include "include/types.h"
 
 namespace graphvizwrapper {
 
@@ -56,17 +57,21 @@ class TNode {
   // kSubGraphStmt or kIdAssignStmt.
   void AddChild(TNode *child);
 
-  std::vector<TNode*>& GetChilds() { return childs_; }
+  std::vector<TNode *> &GetChilds() { return childs_; }
 
   TNodeType tnode_type() { return tnode_type_; }
 
   TNode *parent() { return parent_; }
 
+<<<<<<< Updated upstream
   virtual void accept(TreeVisitor* visitor) = 0;
+=======
+  virtual void accept(TreeVisitor *visitor) = 0;
+>>>>>>> Stashed changes
 
   int level() { return level_; }
 
-  virtual std::shared_ptr<std::string> to_string() { 
+  virtual std::shared_ptr<std::string> to_string() {
     return std::make_shared<std::string>("");
   }
 
@@ -89,9 +94,7 @@ class Graph : public TNode {
 
   ~Graph() = default;
 
-  virtual void accept(TreeVisitor* visitor) {
-    visitor->visitGraph(this);
-  }
+  virtual void accept(TreeVisitor *visitor) override;
 
   bool strict() { return strict_; }
 
@@ -114,9 +117,7 @@ class AttrStmt : public TNode {
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
-  virtual void accept(TreeVisitor* visitor) {
-    visitor->visitAttrStmt(this);
-  }
+  virtual void accept(TreeVisitor *visitor) override;
   virtual std::shared_ptr<std::string> to_string() override;
 
  private:
@@ -134,9 +135,8 @@ class NodeStmt : public TNode {
     attr_list_.AddAttr(key, value);
   }
 
-  virtual void accept(TreeVisitor* visitor) {
-    visitor->visitNodeStmt(this);
-  }
+
+  virtual void accept(TreeVisitor *visitor) override;
 
   std::string GetNodeIdStr() { return node_id_; }
   virtual std::shared_ptr<std::string> to_string() override;
@@ -156,9 +156,7 @@ class EdgeStmt : public TNode {
   void AddAttr(std::string key, std::string value) {
     attr_list_.AddAttr(key, value);
   }
-  virtual void accept(TreeVisitor* visitor) {
-    visitor->visitEdgeStmt(this);
-  }
+  virtual void accept(TreeVisitor *visitor) override;
   virtual std::shared_ptr<std::string> to_string() override;
 
  private:
@@ -172,9 +170,7 @@ class IdAssignStmt : public TNode {
  public:
   IdAssignStmt() : TNode(TNodeType::kIdAssignStmt) {}
   ~IdAssignStmt() = default;
-  virtual void accept(TreeVisitor* visitor) {
-    visitor->visitIdAssignStmt(this);
-  }
+  virtual void accept(TreeVisitor *visitor) override;
   virtual std::shared_ptr<std::string> to_string() {
     return std::make_shared<std::string>("");
   }

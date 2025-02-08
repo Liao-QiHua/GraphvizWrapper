@@ -24,7 +24,7 @@
 #include "include/nodes.h"
 #include "include/types.h"
 #include "include/graphviz.h"
-
+#include "include/tree_visitor.h"
 
 int test0() {
     using namespace std;
@@ -59,8 +59,10 @@ int test0() {
     subgraph->AddChild(edge_stmt4);
     graph.AddSubGraph(subgraph);
     cout << *(graph.root_->to_string()) << endl;
+
     return 0;
 }
+
 int main() {
     return test0();
 }

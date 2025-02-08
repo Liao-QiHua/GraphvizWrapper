@@ -20,6 +20,53 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 //  DEALINGS IN THE SOFTWARE.
 
-#include "include/types.h"
+#include <cstring>
+#include <string>
+namespace graphvizwrapper {
 
-namespace graphvizwrapper {}  // namespace graphvizwrapper
+#define DEBUG_PRINT(s)             \
+  do {                             \
+    std::cout << (s) << std::endl; \
+  } while (false);
+
+template <typename T, T v>
+inline std::string enum_to_string() {
+  const char* function = nullptr;
+#ifdef _MSC_VER
+  function = __FUNCSIG__;
+#elif defined(__clang__)
+  function = __PRETTY_FUNCTION__;
+#elif defined(__GNUC__)
+  function = __PRETTY_FUNCTION__;
+#else
+  std::cout << "Using an unknown compiler." << std::endl;
+#endif
+  auto function_len = strlen(function);
+  auto start = 0u;
+  auto equal_num = 0u;
+  auto i = 0u;
+  while (i < function_len) {
+    if (function[i] != '=') {
+    } else if (function[i] == '=') {
+      equal_num++;
+    }
+    if (equal_num == 2) {
+      start = i;
+      break;
+    }
+    ++i;
+  }
+  // skip ' '
+  ++start;
+  std::string v_str;
+  while (start < function_len) {
+    if (function[start] != ';') {
+      v_str.append(std::string(1, function[start++]));
+    } else {
+      break;
+    }
+  }
+
+  return v_str;
+}
+}  // namespace graphvizwrapper

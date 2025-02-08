@@ -23,32 +23,33 @@
 //  DEALINGS IN THE SOFTWARE.
 
 #include "include/nodes.h"
+#include "include/tree_visitor.h"
 
 namespace graphvizwrapper {
 
 class Graphviz {
-public:
+ public:
   Graphviz(TNodeType tnode_type = TNodeType::kGraph, bool strict = false)
-    : root_(new Graph(tnode_type, strict)) {
-  }
-  ~Graphviz() { free(root_); }
-  void AddSubGraph(Graph * sub_graph);
-  void AddNodeStmt(NodeStmt * stmt);
-  void AddEdgeStmt(EdgeStmt * stmt);
-  void AddAttrStmt(AttrStmt * stmt);
-  void AddIdAssignStmt(IdAssignStmt * stmt);
+      : root_(new Graph(tnode_type, strict)) {}
+  ~Graphviz() { free(); }
+  void AddSubGraph(Graph* sub_graph);
+  void AddNodeStmt(NodeStmt* stmt);
+  void AddEdgeStmt(EdgeStmt* stmt);
+  void AddAttrStmt(AttrStmt* stmt);
+  void AddIdAssignStmt(IdAssignStmt* stmt);
   // Graph * CreateSubGraph(Graph * parent = this);
   // NodeStmt * CreateNodeStmt();
   // EdgeStmt * CreateEdgeStmt();
   // AttrStmt * CreateAttrStmt();
   // IdAssignStmt * CreateIdAssignStmt();
-private:
+ private:
   // Release the entire tree with root_ as the root by postorder traversal.
-  void free(TNode * root);
-public:
-  Graph * root_;
+  void free();
+
+ public:
+  Graph* root_;
 };
 
 }  // namespace graphvizwrapper
 
-#endif // _GRAPHVIZ_H_
+#endif  // _GRAPHVIZ_H_

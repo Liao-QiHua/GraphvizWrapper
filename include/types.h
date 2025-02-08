@@ -232,7 +232,6 @@ struct used_by_node : std::false_type {};
 template <typename T>
 struct used_by_subgraph : std::false_type {};
 
-
 }  // namespace graphvizwrapper
 
 #endif  // _TYPES_H_

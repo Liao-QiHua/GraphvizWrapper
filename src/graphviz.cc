@@ -66,12 +66,9 @@ void Graphviz::AddIdAssignStmt(IdAssignStmt* stmt) {
 
 // }
 
-void Graphviz::free(TNode * root) {
-    if (root == nullptr) return;
-    for (auto * child : root->GetChilds()) {
-        free(child);
-    }
-    //std::cout << (int)root->tnode_type() << "\n";
-    delete root;
+void Graphviz::free() {
+  if (root_ == nullptr) return;
+  DeleterVisitor deleter;
+  root_->accept(&deleter);
 }
 }  // namespace graphvizwrapper

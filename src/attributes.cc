@@ -21,6 +21,7 @@
 //  DEALINGS IN THE SOFTWARE.
 
 #include "include/attributes.h"
+
 #include <string>
 
 namespace graphvizwrapper {

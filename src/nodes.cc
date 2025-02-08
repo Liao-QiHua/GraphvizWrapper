@@ -25,7 +25,6 @@
 #include <memory>
 #include <string>
 
-
 namespace graphvizwrapper {
 
 // TNode begin
@@ -48,18 +47,18 @@ void TNode::set_level(TNode *node, int level) {
 // TNode end
 
 // Graph begin
+
+void Graph::accept(TreeVisitor *visitor) { visitor->visitGraph(this); }
+
 std::shared_ptr<std::string> Graph::to_string() {
   auto graph_str = std::make_shared<std::string>();
   graph_str->reserve(100);
   std::string space_str(level() * 2, ' ');
-  graph_str->append(space_str)
-           .append(GetName())
-           .append(" {\n");
+  graph_str->append(space_str).append(GetName()).append(" {\n");
   for (auto i = 0u; i < childs_.size(); i++) {
     graph_str->append(*childs_[i]->to_string());
   }
-  graph_str->append(space_str)
-           .append("}\n");
+  graph_str->append(space_str).append("}\n");
   return graph_str;
 }
 
@@ -77,6 +76,8 @@ std::string Graph::GetName() {
 // Graph end
 
 // AttrStmt begin
+void AttrStmt::accept(TreeVisitor *visitor) { visitor->visitAttrStmt(this); }
+
 std::shared_ptr<std::string> AttrStmt::to_string() {
   auto attr_stmt_str = std::make_shared<std::string>();
   attr_stmt_str->reserve(50);
@@ -97,19 +98,23 @@ std::shared_ptr<std::string> AttrStmt::to_string() {
 // AttrStmt end
 
 // NodeStmt begin
+void NodeStmt::accept(TreeVisitor *visitor) { visitor->visitNodeStmt(this); }
+
 std::shared_ptr<std::string> NodeStmt::to_string() {
   std::string space_str(level() * 2, ' ');
   auto node_stmt_str = std::make_shared<std::string>();
   node_stmt_str->reserve(50);
   node_stmt_str->append(space_str)
-               .append(node_id_)
-               .append(attr_list_.to_string())
-               .append(";\n");
+      .append(node_id_)
+      .append(attr_list_.to_string())
+      .append(";\n");
   return node_stmt_str;
 }
 // NodeStmt end
 
 // EdgeStmt begin
+void EdgeStmt::accept(TreeVisitor *visitor) { visitor->visitEdgeStmt(this); }
+
 void EdgeStmt::set_edge(NodeStmt *begin, NodeStmt *end) {
   if (begin == nullptr || end == nullptr) {
     exit(1);
@@ -126,12 +131,18 @@ std::shared_ptr<std::string> EdgeStmt::to_string() {
   auto edge_stmt_str = std::make_shared<std::string>();
   edge_stmt_str->reserve(50);
   edge_stmt_str->append(space_str)
-               .append(begin_->GetNodeIdStr())
-               .append(directed_ ? " -> " : " -- ")
-               .append(end_->GetNodeIdStr())
-               .append(attr_list_.to_string())
-               .append(";\n");
+      .append(begin_->GetNodeIdStr())
+      .append(directed_ ? " -> " : " -- ")
+      .append(end_->GetNodeIdStr())
+      .append(attr_list_.to_string())
+      .append(";\n");
   return edge_stmt_str;
 }
 // EdgeStmt end
+
+// IdAssignStmt begin
+void IdAssignStmt::accept(TreeVisitor *visitor) {
+  visitor->visitIdAssignStmt(this);
+}
+// IdAssignStmt end
 }  // namespace graphvizwrapper
